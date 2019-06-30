@@ -1,0 +1,150 @@
+Package: python-apt-common
+Status: install ok installed
+Priority: optional
+Section: python
+Installed-Size: 478
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: all
+Source: python-apt
+Version: 0.9.3.12
+Replaces: python-apt (<< 0.7.98+nmu1)
+Depends: python | python3
+Breaks: python-apt (<< 0.7.98+nmu1)
+Enhances: python-apt, python3-apt
+Description: Python interface to libapt-pkg (locales)
+ The apt_pkg Python interface will provide full access to the internal
+ libapt-pkg structures allowing Python programs to easily perform a
+ variety of functions.
+ .
+ This package contains locales.
+
+Package: libregexp-common-perl
+Status: install ok installed
+Priority: optional
+Section: perl
+Installed-Size: 372
+Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
+Architecture: all
+Version: 2013031301-1
+Depends: perl
+Description: module with common regular expressions
+ Regexp::Common is a Perl module that exports a single hash ('%RE') that
+ stores or generates commonly needed regular expressions.
+ .
+ The module currently provides the following patterns:
+ .
+   * balanced parentheses and brackets
+   * delimited text (with escapes)
+   * integers and floating-point numbers in any base (up to 36)
+   * comments in 44 languages
+   * offensive language
+   * lists of any pattern
+   * IPv4 and IPv6 addresses
+   * URIs
+   * Zip codes
+Homepage: https://metacpan.org/release/Regexp-Common/
+
+Package: bind9-host
+Status: install ok installed
+Priority: standard
+Section: net
+Installed-Size: 131
+Maintainer: LaMont Jones <lamont@debian.org>
+Architecture: armhf
+Source: bind9
+Version: 1:9.9.5.dfsg-9+deb8u15
+Replaces: dnsutils (<< 1:9.0.0), host (<< 1:9.7.0)
+Provides: host
+Depends: libbind9-90 (= 1:9.9.5.dfsg-9+deb8u15), libc6 (>= 2.4), libcap2 (>= 1:2.10), libcomerr2 (>= 1.01), libdns100 (= 1:9.9.5.dfsg-9+deb8u15), libgssapi-krb5-2 (>= 1.6.dfsg.2), libisc95 (= 1:9.9.5.dfsg-9+deb8u15), libisccfg90 (= 1:9.9.5.dfsg-9+deb8u15), libk5crypto3 (>= 1.6.dfsg.2), libkrb5-3 (>= 1.6.dfsg.2), liblwres90 (= 1:9.9.5.dfsg-9+deb8u15), libssl1.0.0 (>= 1.0.0), libxml2 (>= 2.6.27)
+Conflicts: dnsutils (<< 1:9.0.0), host (<< 1:9.7.0)
+Description: Version of 'host' bundled with BIND 9.X
+ This package provides the 'host' program in the form that is bundled with
+ the BIND 9.X sources.
+
+Package: iputils-ping
+Status: install ok installed
+Priority: important
+Section: net
+Installed-Size: 109
+Maintainer: Noah Meyerhans <noahm@debian.org>
+Architecture: armhf
+Source: iputils
+Version: 3:20121221-5
+Provides: ping
+Depends: libc6 (>= 2.11), libcap2 (>= 2.10), libgnutls-openssl27
+Recommends: libcap2-bin
+Description: Tools to test the reachability of network hosts
+ The ping command sends ICMP ECHO_REQUEST packets to a host in order to
+ test if the host is reachable via the network.
+ .
+ This package includes a ping6 utility which supports IPv6 network
+ connections.
+
+Package: libxi6
+Status: deinstall ok config-files
+Priority: optional
+Section: libs
+Installed-Size: 111
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Architecture: armhf
+Multi-Arch: same
+Source: libxi
+Version: 2:1.7.4-1+deb8u1
+Config-Version: 2:1.7.4-1+deb8u1
+Depends: libc6 (>= 2.4), libx11-6 (>= 2:1.6.0), libxext6
+Pre-Depends: multiarch-support
+Description: X11 Input extension library
+ libXi provides an X Window System client interface to the XINPUT
+ extension to the X protocol.
+ .
+ The Input extension allows setup and configuration of multiple input devices,
+ and will soon allow hotplugging of input devices; to be added and removed on
+ the fly.
+ .
+ More information about X.Org can be found at:
+ <URL:http://www.X.org>
+ .
+ This module can be found at
+ git://anongit.freedesktop.org/git/xorg/lib/libXi
+
+Package: libedit2
+Status: install ok installed
+Priority: standard
+Section: libs
+Installed-Size: 184
+Maintainer: LLVM Packaging Team <pkg-llvm-team@lists.alioth.debian.org>
+Architecture: armhf
+Multi-Arch: same
+Source: libedit
+Version: 3.1-20140620-2
+Depends: libbsd0 (>= 0.0), libc6 (>= 2.17), libtinfo5
+Pre-Depends: multiarch-support
+Description: BSD editline and history libraries
+ Command line editor library provides generic line editing,
+ history, and tokenization functions.
+ .
+ It slightly resembles GNU readline.
+Homepage: http://www.thrysoee.dk/editline/
+
+Package: libpam-runtime
+Status: install ok installed
+Priority: required
+Section: admin
+Installed-Size: 815
+Maintainer: Steve Langasek <vorlon@debian.org>
+Architecture: all
+Multi-Arch: foreign
+Source: pam
+Version: 1.1.8-3.1+deb8u2+rpi3
+Replaces: libpam0g-dev, libpam0g-util
+Depends: debconf (>= 0.5) | debconf-2.0, debconf (>= 1.5.19) | cdebconf, libpam-modules (>= 1.0.1-6)
+Conflicts: libpam0g-util
+Conffiles:
+ /etc/pam.conf 87fc76f18e98ee7d3848f6b81b3391e5
+ /etc/pam.d/other 31aa7f2181889ffb00b87df4126d1701
+Description: Runtime support for the PAM library
+ Contains configuration files and  directories required for
+ authentication  to work on Debian systems.  This package is required
+ on almost all installations.
+Homepage: http://pam.sourceforge.net/
+
