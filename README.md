@@ -1,5 +1,5 @@
 # dpkgrest
-Restfull server for reading dpkg packages
+Restful server for reading dpkg packages
 
 [![GoDoc](https://godoc.org/github.com/jraats/dpkgrest?status.svg)](https://godoc.org/github.com/jraats/dpkgrest)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jraats/dpkgrest)](https://goreportcard.com/report/github.com/jraats/dpkgrest)
