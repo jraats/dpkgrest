@@ -49,7 +49,7 @@ func main() {
 		}
 	}
 
-	http.HandleFunc("/", callback)
+	http.HandleFunc("/list", callback)
 	err = http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "cannot run webserver %v\n", err)
@@ -58,14 +58,14 @@ func main() {
 }
 
 func callback(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
+	if r.URL.Path != "/list" {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
 
 	var pattern *regexp.Regexp
 	queryValues := r.URL.Query()
-	if queryPattern, ok := queryValues["q"]; ok && len(queryPattern) > 0 {
+	if queryPattern, ok := queryValues["filter"]; ok && len(queryPattern) > 0 {
 		var err error
 		pattern, err = regexp.Compile(queryPattern[0])
 		if err != nil {

@@ -15,7 +15,7 @@ func TestHttpServer(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(callback))
 	defer ts.Close()
 
-	res, err := http.Get(ts.URL)
+	res, err := http.Get(ts.URL + "/list")
 	require.Nil(t, err)
 	require.Equal(t, http.StatusOK, res.StatusCode)
 
@@ -69,7 +69,7 @@ func TestHttpServerWithFilter(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(callback))
 	defer ts.Close()
 
-	res, err := http.Get(ts.URL + "?q=lib")
+	res, err := http.Get(ts.URL + "/list?filter=lib")
 	require.Nil(t, err)
 	require.Equal(t, http.StatusOK, res.StatusCode)
 
@@ -108,7 +108,7 @@ func TestHttpServerWithInvalidFilter(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(callback))
 	defer ts.Close()
 
-	res, err := http.Get(ts.URL + "?q=lib)")
+	res, err := http.Get(ts.URL + "/list?filter=lib)")
 	require.Nil(t, err)
 	require.Equal(t, http.StatusBadRequest, res.StatusCode)
 
@@ -120,7 +120,7 @@ func TestHttpServerWithInvalidDatabase(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(callback))
 	defer ts.Close()
 
-	res, err := http.Get(ts.URL)
+	res, err := http.Get(ts.URL + "/list")
 	require.Nil(t, err)
 	require.Equal(t, http.StatusInternalServerError, res.StatusCode)
 

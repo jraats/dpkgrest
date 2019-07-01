@@ -1,0 +1,64 @@
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+  - https
+swagger: '2.0'
+info:
+  description: This documentation describes the DpkgRest API.
+  title: DpkgRest API.
+  license:
+    name: MIT
+    url: 'http://opensource.org/licenses/MIT'
+  version: 1.0.0
+basePath: /
+paths:
+  /list:
+    get:
+      tags:
+        - list
+      summary: List all installed packages
+      operationId: getAll
+      parameters:
+        - type: string
+          description: Filter regex
+          name: filter
+          in: query
+      responses:
+        '200':
+          $ref: '#/responses/PackagesList'
+        '400':
+          $ref: '#/responses/badrequest'
+        '403':
+          $ref: '#/responses/forbidden'
+definitions:
+  Package:
+    description: Package contains the version of the package
+    type: object
+    properties:
+      Name:
+        type: string
+      Version:
+        type: string
+      PackageState:
+        type: string
+      PackageSelectionState:
+        type: string
+responses:
+  PackagesList:
+    description: PackagesList
+    schema:
+      type: array
+      items:
+        $ref: '#/definitions/Package'
+  badrequest:
+    description: badrequest is a bad request (filter regex) error response  
+  forbidden:
+    description: forbidden is a forbidden error response
+securityDefinitions:
+  BasicAuth:
+    type: basic
+security:
+  - BasicAuth: []
