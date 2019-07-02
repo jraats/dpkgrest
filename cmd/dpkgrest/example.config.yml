@@ -16,4 +16,4 @@ port: 80
 # Basic auth username and password
 users:
   - name: admin
-	  password: admin
+    password: admin
