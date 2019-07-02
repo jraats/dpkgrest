@@ -31,6 +31,8 @@ paths:
           $ref: '#/responses/PackagesList'
         '400':
           $ref: '#/responses/badrequest'
+        '401':
+          $ref: '#/responses/unauthorized'
         '403':
           $ref: '#/responses/forbidden'
 definitions:
@@ -57,6 +59,8 @@ responses:
     description: badrequest is a bad request (filter regex) error response  
   forbidden:
     description: forbidden is a forbidden error response
+  unauthorized:
+    description: unauthorized is an unauthorized error response
 securityDefinitions:
   BasicAuth:
     type: basic

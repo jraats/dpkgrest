@@ -1,0 +1,21 @@
+# File to the dpkg database
+source: "/var/lib/dpkg/status"
+
+# Include regex
+include: "php"
+
+# Exclude regex
+exclude: "lib"
+
+# Bind ip (0.0.0.0 for all interfaces)
+host: 0.0.0.0
+
+# Port to bind to
+port: 80
+
+# Basic auth username and password
+users:
+  - name: admin
+    password: admin
+  - name: user
+    password: secret    

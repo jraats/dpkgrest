@@ -8,8 +8,26 @@ import (
 	"os"
 	"regexp"
 
+	"gopkg.in/yaml.v2"
+
 	"github.com/jraats/dpkgrest"
 )
+
+// Config contains all the fields that can be set via a config file
+type Config struct {
+	Source  string `yaml:"source"`
+	Include string `yaml:"include"`
+	Exclude string `yaml:"exclude"`
+	Host    string `yaml:"host"`
+	Port    int    `yaml:"port"`
+	Users   []User `yaml:"users"`
+}
+
+// User contains basic auth credentials
+type User struct {
+	Name     string `yaml:"name"`
+	Password string `yaml:"password"`
+}
 
 var (
 	databaseFile   string
@@ -17,6 +35,10 @@ var (
 	excludePattern string
 	host           string
 	port           int
+	configFile     string
+	username       string
+	password       string
+	users          []User
 
 	includeSearch *regexp.Regexp
 	excludeSearch *regexp.Regexp
@@ -28,11 +50,22 @@ func init() {
 	flag.StringVar(&excludePattern, "exclude", "", "a regex to exclude all these packages")
 	flag.StringVar(&host, "host", "0.0.0.0", "the host to bind to")
 	flag.IntVar(&port, "port", 80, "the port to bind to")
+	flag.StringVar(&configFile, "config", "", "location to the configuration file")
+	flag.StringVar(&username, "username", "", "the username for basic auth")
+	flag.StringVar(&password, "password", "", "the password for basic auth")
 	flag.Parse()
 }
 
 func main() {
 	var err error
+	addDefaultUser()
+	if configFile != "" {
+		if err = loadConfig(configFile); err != nil {
+			fmt.Fprintf(os.Stderr, "invalid config file %v\n", err)
+			os.Exit(1)
+		}
+	}
+
 	if includePattern != "" {
 		includeSearch, err = regexp.Compile(includePattern)
 		if err != nil {
@@ -57,10 +90,58 @@ func main() {
 	}
 }
 
+func addDefaultUser() {
+	users = make([]User, 0)
+	if username != "" && password != "" {
+		users = append(users, User{Name: username, Password: password})
+	}
+}
+
+func loadConfig(file string) error {
+	var cfg Config
+	f, err := os.Open(file)
+	if err != nil {
+		return err
+	}
+	decoder := yaml.NewDecoder(f)
+	if err = decoder.Decode(&cfg); err != nil {
+		return err
+	}
+	databaseFile = cfg.Source
+	includePattern = cfg.Include
+	excludePattern = cfg.Exclude
+	host = cfg.Host
+	port = cfg.Port
+	users = append(users, cfg.Users...)
+	return nil
+}
+
 func callback(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/list" {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
+	}
+
+	// Check basic auth
+	if len(users) != 0 {
+		username, password, ok := r.BasicAuth()
+		if !ok {
+			w.Header().Add(`WWW-Authenticate`, `Basic realm="login"`)
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
+		}
+		var valid bool
+		for _, user := range users {
+			if user.Name == username && user.Password == password {
+				valid = true
+				break
+			}
+		}
+		if !valid {
+			w.Header().Add(`WWW-Authenticate`, `Basic realm="login"`)
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
+		}
 	}
 
 	var pattern *regexp.Regexp

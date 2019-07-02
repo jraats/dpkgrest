@@ -10,8 +10,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func defaultInit() {
+	databaseFile = ""
+	includePattern = ""
+	excludePattern = ""
+	host = ""
+	port = 80
+	configFile = ""
+	username = ""
+	password = ""
+	users = make([]User, 0)
+}
+
 func TestHttpServer(t *testing.T) {
+	defaultInit()
 	databaseFile = filepath.Join("..", "..", "testdata", "status")
+
 	ts := httptest.NewServer(http.HandlerFunc(callback))
 	defer ts.Close()
 
@@ -65,6 +79,7 @@ func TestHttpServer(t *testing.T) {
 }
 
 func TestHttpServerWithFilter(t *testing.T) {
+	defaultInit()
 	databaseFile = filepath.Join("..", "..", "testdata", "status")
 	ts := httptest.NewServer(http.HandlerFunc(callback))
 	defer ts.Close()
@@ -104,6 +119,7 @@ func TestHttpServerWithFilter(t *testing.T) {
 }
 
 func TestHttpServerWithInvalidFilter(t *testing.T) {
+	defaultInit()
 	databaseFile = filepath.Join("..", "..", "testdata", "status")
 	ts := httptest.NewServer(http.HandlerFunc(callback))
 	defer ts.Close()
@@ -116,6 +132,7 @@ func TestHttpServerWithInvalidFilter(t *testing.T) {
 }
 
 func TestHttpServerWithInvalidDatabase(t *testing.T) {
+	defaultInit()
 	databaseFile = "invalid"
 	ts := httptest.NewServer(http.HandlerFunc(callback))
 	defer ts.Close()
@@ -128,6 +145,7 @@ func TestHttpServerWithInvalidDatabase(t *testing.T) {
 }
 
 func TestHttpServerWithInvalidPath(t *testing.T) {
+	defaultInit()
 	databaseFile = filepath.Join("..", "..", "testdata", "status")
 	ts := httptest.NewServer(http.HandlerFunc(callback))
 	defer ts.Close()
@@ -137,4 +155,87 @@ func TestHttpServerWithInvalidPath(t *testing.T) {
 	require.Equal(t, http.StatusNotFound, res.StatusCode)
 
 	res.Body.Close()
+}
+
+func TestHttpServerWithBasicAuth(t *testing.T) {
+	defaultInit()
+	databaseFile = filepath.Join("..", "..", "testdata", "status")
+	users = []User{
+		User{
+			Name:     "me",
+			Password: "test",
+		},
+		User{
+			Name:     "another",
+			Password: "me",
+		},
+	}
+	ts := httptest.NewServer(http.HandlerFunc(callback))
+	defer ts.Close()
+
+	r, err := http.NewRequest(http.MethodGet, ts.URL+"/list?filter=notfound", nil)
+	require.Nil(t, err)
+	res, err := ts.Client().Do(r)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusUnauthorized, res.StatusCode)
+	res.Body.Close()
+
+	r.SetBasicAuth("invalid", "credentials")
+	res, err = ts.Client().Do(r)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusUnauthorized, res.StatusCode)
+	res.Body.Close()
+
+	r.SetBasicAuth("another", "me")
+	res, err = ts.Client().Do(r)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusOK, res.StatusCode)
+	res.Body.Close()
+}
+
+func TestConfig(t *testing.T) {
+	defaultInit()
+	configFile = filepath.Join("testdata", "test.config.yml")
+	require.Nil(t, loadConfig(configFile))
+
+	require.Equal(t, "/var/lib/dpkg/status", databaseFile)
+	require.Equal(t, "php", includePattern)
+	require.Equal(t, "lib", excludePattern)
+	require.Equal(t, "0.0.0.0", host)
+	require.Equal(t, 80, port)
+	require.Equal(t, []User{
+		User{
+			Name:     "admin",
+			Password: "admin",
+		},
+		User{
+			Name:     "user",
+			Password: "secret",
+		},
+	}, users)
+}
+
+func TestAddDefaultUser(t *testing.T) {
+	defaultInit()
+	addDefaultUser()
+	require.Equal(t, []User{}, users)
+
+	username = "admin"
+	addDefaultUser()
+	require.Equal(t, []User{}, users)
+
+	username = ""
+	password = "admin"
+	addDefaultUser()
+	require.Equal(t, []User{}, users)
+
+	username = "me"
+	password = "secret"
+	addDefaultUser()
+	require.Equal(t, []User{
+		User{
+			Name:     "me",
+			Password: "secret",
+		},
+	}, users)
 }
