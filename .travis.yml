@@ -8,7 +8,6 @@ language: go
 
 go:
   - 1.12.x
-  - tip
 
 install: true
 
